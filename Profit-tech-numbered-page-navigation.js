@@ -1,189 +1,57 @@
-  /*<![CDATA[*/
-    if (typeof firstText == "undefined") firstText = "First"; 
-    if (typeof lastText == "undefined") lastText = "Last";
-    var noPage;
-    var currentPage;
-    var currentPageNo;
-    var postLabel;
-    pagecurrentg();
+/* Modified by Profit-tech.blogspot.com */
 
-    function looppagecurrentg(pageInfo) {
-        var html = '';
-        pageNumber = parseInt(numPages / 2);
-        if (pageNumber == numPages - pageNumber) {
-            numPages = pageNumber * 2 + 1
-        }
-        pageStart = currentPageNo - pageNumber;
-        if (pageStart < 1) pageStart = 1;
-        lastPageNo = parseInt(pageInfo / perPage) + 1;
-        if (lastPageNo - 1 == pageInfo / perPage) lastPageNo = lastPageNo - 1;
-        pageEnd = pageStart + numPages - 1;
-        if (pageEnd > lastPageNo) pageEnd = lastPageNo;
-        html += "<span class='showpageOf'>Page " + currentPageNo + ' of ' + lastPageNo + "</span>";
-        var prevNumber = parseInt(currentPageNo) - 1;
-      
-		//Iccsi was here, doing magic      
-        if (currentPageNo > 1) {
-			if (currentPage == "page") {
-			  html += '<span class="showpage firstpage"><a href="' + home_page + '">' + firstText + '</a></span>'
-			} else {
-			  html += '<span class="displaypageNum firstpage"><a href="/search/label/' + postLabel + '?&max-results=' + perPage + '">' + firstText + '</a></span>'
-			}
-		}
-		
-		if (currentPageNo > 2) {
-            if (currentPageNo == 3) { 
-                if (currentPage == "page") {
-                    html += '<span class="showpage"><a href="' + home_page + '">' + prevText + '</a></span>'
-                } else {
-                    html += '<span class="displaypageNum"><a href="/search/label/' + postLabel + '?&max-results=' + perPage + '">' + prevText + '</a></span>'
-                }
-            } else {
-                if (currentPage == "page") {
-                    html += '<span class="displaypageNum"><a href="#" onclick="redirectpage(' + prevNumber + ');return false">' + prevText + '</a></span>'
-                } else {
-                    html += '<span class="displaypageNum"><a href="#" onclick="redirectlabel(' + prevNumber + ');return false">' + prevText + '</a></span>'
-                }
-            }
-        }
-        if (pageStart > 1) {
-            if (currentPage == "page") {
-                html += '<span class="displaypageNum"><a href="' + home_page + '">1</a></span>'
-            } else {
-                html += '<span class="displaypageNum"><a href="/search/label/' + postLabel + '?&max-results=' + perPage + '">1</a></span>'
-            }
-        }
-        if (pageStart > 2) {
-            html += ' ... '
-        }
-        for (var jj = pageStart; jj <= pageEnd; jj++) {
-            if (currentPageNo == jj) {
-                html += '<span class="pagecurrent">' + jj + '</span>'
-            } else if (jj == 1) {
-                if (currentPage == "page") {
-                    html += '<span class="displaypageNum"><a href="' + home_page + '">1</a></span>'
-                } else {
-                    html += '<span class="displaypageNum"><a href="/search/label/' + postLabel + '?&max-results=' + perPage + '">1</a></span>'
-                }
-            } else {
-                if (currentPage == "page") {
-                    html += '<span class="displaypageNum"><a href="#" onclick="redirectpage(' + jj + ');return false">' + jj + '</a></span>'
-                } else {
-                    html += '<span class="displaypageNum"><a href="#" onclick="redirectlabel(' + jj + ');return false">' + jj + '</a></span>'
-                }
-            }
-        }
-        if (pageEnd < lastPageNo - 1) {
-            html += '...'
-        }
-        if (pageEnd < lastPageNo) {
-            if (currentPage == "page") {
-                html += '<span class="displaypageNum"><a href="#" onclick="redirectpage(' + lastPageNo + ');return false">' + lastPageNo + '</a></span>'
-            } else {
-                html += '<span class="displaypageNum"><a href="#" onclick="redirectlabel(' + lastPageNo + ');return false">' + lastPageNo + '</a></span>'
-            }
-        }
-
-
-        var nextnumber = parseInt(currentPageNo) + 1;
-        if (currentPageNo < (lastPageNo - 1)) {
-            if (currentPage == "page") {
-                html += '<span class="displaypageNum"><a href="#" onclick="redirectpage(' + nextnumber + ');return false">' + nextText + '</a></span>'
-            } else {
-                html += '<span class="displaypageNum"><a href="#" onclick="redirectlabel(' + nextnumber + ');return false">' + nextText + '</a></span>'
-            }
-		}
-		
-		if (currentPageNo < lastPageNo) {
-			//Iccsi was here, doing magic
-			if (currentPage == "page") {
-			  html += '<span class="displaypageNum lastpage"><a href="#" onclick="redirectpage(' + lastPageNo + ');return false">' + lastText + '</a></span>'
-			} else {
-			  html += '<span class="displaypageNum lastpage"><a href="#" onclick="redirectlabel(' + lastPageNo + ');return false">' + lastText + '</a></span>'
-			}
-        }
-
-        var pageArea = document.getElementsByName("pageArea");
-        var blogPager = document.getElementById("blog-pager");
-        for (var p = 0; p < pageArea.length; p++) {
-            pageArea[p].innerHTML = html
-        }
-        if (pageArea && pageArea.length > 0) {
-            html = ''
-        }
-        if (blogPager) {
-            blogPager.innerHTML = html
-        }
-    }
-
-    function totalcountdata(root) {
-        var feed = root.feed;
-        var totaldata = parseInt(feed.openSearch$totalResults.$t, 10);
-        looppagecurrentg(totaldata)
-    }
-
-    function pagecurrentg() {
-        var thisUrl = urlactivepage;
-        if (thisUrl.indexOf("/search/label/") != -1) {
-            if (thisUrl.indexOf("?updated-max") != -1) {
-                postLabel = thisUrl.substring(thisUrl.indexOf("/search/label/") + 14, thisUrl.indexOf("?updated-max"))
-            } else {
-                postLabel = thisUrl.substring(thisUrl.indexOf("/search/label/") + 14, thisUrl.indexOf("?&max"))
-            }
-        }
-        if (thisUrl.indexOf("?q=") == -1 && thisUrl.indexOf(".html") == -1) {
-            if (thisUrl.indexOf("/search/label/") == -1) {
-                currentPage = "page";
-                if (urlactivepage.indexOf("#PageNo=") != -1) {
-                    currentPageNo = urlactivepage.substring(urlactivepage.indexOf("#PageNo=") + 8, urlactivepage.length)
-                } else {
-                    currentPageNo = 1
-                }
-                document.write("<script src=\"" + home_page + "feeds/posts/summary?max-results=1&alt=json-in-script&callback=totalcountdata\"><\/script>")
-            } else {
-                currentPage = "label";
-                if (thisUrl.indexOf("&max-results=") == -1) {
-                    perPage = 20
-                }
-                if (urlactivepage.indexOf("#PageNo=") != -1) {
-                    currentPageNo = urlactivepage.substring(urlactivepage.indexOf("#PageNo=") + 8, urlactivepage.length)
-                } else {
-                    currentPageNo = 1
-                }
-                document.write('<script src="' + home_page + 'feeds/posts/summary/-/' + postLabel + '?alt=json-in-script&callback=totalcountdata&max-results=1" ><\/script>')
-            }
-        }
-    }
-
-    function redirectpage(numberpage) {
-        jsonstart = (numberpage - 1) * perPage;
-        noPage = numberpage;
-        var nameBody = document.getElementsByTagName('head')[0];
-        var newInclude = document.createElement('script');
-        newInclude.type = 'text/javascript';
-        newInclude.setAttribute("src", home_page + "feeds/posts/summary?start-index=" + jsonstart + "&max-results=1&alt=json-in-script&callback=finddatepost");
-        nameBody.appendChild(newInclude)
-    }
-
-    function redirectlabel(numberpage) {
-        jsonstart = (numberpage - 1) * perPage;
-        noPage = numberpage;
-        var nameBody = document.getElementsByTagName('head')[0];
-        var newInclude = document.createElement('script');
-        newInclude.type = 'text/javascript';
-        newInclude.setAttribute("src", home_page + "feeds/posts/summary/-/" + postLabel + "?start-index=" + jsonstart + "&max-results=1&alt=json-in-script&callback=finddatepost");
-        nameBody.appendChild(newInclude)
-    }
-
-    function finddatepost(root) {
-        post = root.feed.entry[0];
-        var timestamp1 = post.published.$t.substring(0, 19) + post.published.$t.substring(23, 29);
-        var timestamp = encodeURIComponent(timestamp1);
-        if (currentPage == "page") {
-            var pAddress = "/search?updated-max=" + timestamp + "&max-results=" + perPage + "#PageNo=" + noPage
-        } else {
-            var pAddress = "/search/label/" + postLabel + "?updated-max=" + timestamp + "&max-results=" + perPage + "#PageNo=" + noPage
-        }
-        location.href = pAddress
-    }
-  /*]]>*/
+eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};
+if(!''.replace(/^/,String)){while(c--)r[e(c)]=k[c]||e(c);
+k=[function(e){return r[e]}];
+e=function(){return'\\w+'};
+c=1};
+while(c--)if(k[c])p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c]);
+return p}('6 I;
+6 i;
+6 f;
+6 n;
+1f();
+C 1g(15){6 5=\'\';
+J=K(N/2);
+4(J==N-J){N=J*2+1}A=f-J;
+4(A<1)A=1;
+d=K(15/j)+1;
+4(d-1==15/j)d=d-1;
+D=A+N-1;
+4(D>d)D=d;
+5+="<3 7=\'1y\'>1z "+f+\' 1A \'+d+"</3>";
+6 16=K(f)-1;
+4(f>1){4(f==2){4(i=="o"){5+=\'<3 7="1B"><a 9="\'+B+\'">\'+O+\'</a></3>\'}b{5+=\'<3 7="g"><a 9="/r/s/\'+n+\'?&c-k=\'+j+\'">\'+O+\'</a></3>\'}}b{4(i=="o"){5+=\'<3 7="g"><a 9="#" v="L(\'+16+\');
+w x">\'+O+\'</a></3>\'}b{5+=\'<3 7="g"><a 9="#" v="M(\'+16+\');
+w x">\'+O+\'</a></3>\'}}}4(A>1){4(i=="o"){5+=\'<3 7="g"><a 9="\'+B+\'">1</a></3>\'}b{5+=\'<3 7="g"><a 9="/r/s/\'+n+\'?&c-k=\'+j+\'">1</a></3>\'}}4(A>2){5+=\' ... \'}1h(6 l=A;
+l<=D;
+l++){4(f==l){5+=\'<3 7="1C">\'+l+\'</3>\'}b 4(l==1){4(i=="o"){5+=\'<3 7="g"><a 9="\'+B+\'">1</a></3>\'}b{5+=\'<3 7="g"><a 9="/r/s/\'+n+\'?&c-k=\'+j+\'">1</a></3>\'}}b{4(i=="o"){5+=\'<3 7="g"><a 9="#" v="L(\'+l+\');
+w x">\'+l+\'</a></3>\'}b{5+=\'<3 7="g"><a 9="#" v="M(\'+l+\');
+w x">\'+l+\'</a></3>\'}}}4(D<d-1){5+=\'...\'}4(D<d){4(i=="o"){5+=\'<3 7="g"><a 9="#" v="L(\'+d+\');
+w x">\'+d+\'</a></3>\'}b{5+=\'<3 7="g"><a 9="#" v="M(\'+d+\');
+w x">\'+d+\'</a></3>\'}}6 17=K(f)+1;
+4(f<d){4(i=="o"){5+=\'<3 7="g"><a 9="#" v="L(\'+17+\');
+w x">\'+1i+\'</a></3>\'}b{5+=\'<3 7="g"><a 9="#" v="M(\'+17+\');
+w x">\'+1i+\'</a></3>\'}}6 E=y.1D("E");
+6 18=y.1E("1F-1G");
+1h(6 p=0;p<E.P;
+p++){E[p].1j=5}4(E&&E.P>0){5=\'\'}4(18){18.1j=5}}C 1a(Q){6 R=Q.R;
+6 1k=K(R.1H$1I.$t,10);
+1g(1k)}C 1f(){6 h=u;
+4(h.e("/r/s/")!=-1){4(h.e("?S-c")!=-1){n=h.F(h.e("/r/s/")+14,h.e("?S-c"))}b{n=h.F(h.e("/r/s/")+14,h.e("?&c"))}}4(h.e("?q=")==-1&&h.e(".5")==-1){4(h.e("/r/s/")==-1){i="o";
+4(u.e("#G=")!=-1){f=u.F(u.e("#G=")+8,u.P)}b{f=1}y.1l("<m T=\\""+B+"U/V/W?c-k=1&X=Y-Z-m&11=1a\\"><\\/m>")}b{i="s";
+4(h.e("&c-k=")==-1){j=1J}4(u.e("#G=")!=-1){f=u.F(u.e("#G=")+8,u.P)}b{f=1}y.1l(\'<m T="\'+B+\'U/V/W/-/\'+n+\'?X=Y-Z-m&11=1a&c-k=1" ><\\/m>\')}}}C L(H){12=(H-1)*j;I=H;
+6 13=y.1m(\'1n\')[0];
+6 z=y.1o(\'m\');
+z.1p=\'1q/1r\';
+z.1s("T",B+"U/V/W?1t-1u="+12+"&c-k=1&X=Y-Z-m&11=1b");
+13.1v(z)}C M(H){12=(H-1)*j;
+I=H;
+6 13=y.1m(\'1n\')[0];
+6 z=y.1o(\'m\');
+z.1p=\'1q/1r\';
+z.1s("T",B+"U/V/W/-/"+n+"?1t-1u="+12+"&c-k=1&X=Y-Z-m&11=1b");
+13.1v(z)}C 1b(Q){1c=Q.R.1K[0];
+6 1w=1c.1x.$t.F(0,19)+1c.1x.$t.F(1L,1M);
+6 1d=1N(1w);
+4(i=="o"){6 1e="/r?S-c="+1d+"&c-k="+j+"#G="+I}b{6 1e="/r/s/"+n+"?S-c="+1d+"&c-k="+j+"#G="+I}1O.9=1e}',62,113,'|||span|if|html|var|class||href||else|max|maksimal|indexOf|nomerhal|showpageNum|thisUrl|jenis|postperpage|results|jj|script|lblname1|page|||search|label||urlactivepage|onclick|return|false|document|newInclude|mulai|home_page|function|akhir|pageArea|substring|PageNo|numberpage|nopage|nomerkiri|parseInt|redirectpage|redirectlabel|numshowpage|upPageWord|length|root|feed|updated|src|feeds|posts|summary|alt|json|in||callback|jsonstart|nBody||banyakdata|prevnomer|nextnomer|blogPager||hitungtotaldata|finddatepost|post|timestamp|alamat|halamanblogger|loophalaman|for|downPageWord|innerHTML|totaldata|write|getElementsByTagName|head|createElement|type|text|javascript|setAttribute|start|index|appendChild|timestamp1|published|showpageOf|Page|of|showpage|showpagePoint|getElementsByName|getElementById|blog|pager|openSearch|totalResults|20|entry|23|29|encodeURIComponent|location'.split('|'),0,{}))
